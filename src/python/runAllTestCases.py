@@ -1,10 +1,14 @@
 import os
 import sys
 import json
+import time
 import subprocess
 
 def isTestingThisSource():
-    return True
+    return False
+
+def getStringFastCompiler():
+    return '\nValidating the parameters...\n'
 
 def getJsonExample():
     #OK
@@ -23,7 +27,7 @@ def getPathTests():
     if len(sys.argv) > 1:
         return sys.argv[1]
     else:
-        return '/home/danielmendes/totvs/framework/AdvplFramework/test/'
+        return '/home/danielmendes/totvs/framework/likeAdvplFrame/test/'
 
 def getAllTestCases():
     files = []
@@ -38,26 +42,62 @@ def getAllTestCases():
 def getJsonTestCase(testCase):
     jsonResult = None
 
-    try:
-        jsonResult = json.loads(testCase)
-    except:
-        jsonResult = None
+    if type(testCase) == str:
+        ignoreString = getStringFastCompiler()
+        position = testCase.find(ignoreString)
+
+        if position >= 0:
+            sizeIgnoreString = len(ignoreString)
+            testCase = testCase[position+sizeIgnoreString:-4]
+
+            try:
+                jsonResult = json.loads(testCase)
+            except:
+                jsonResult = None
 
     return jsonResult
 
-def getResultTestCase(testCase):
-    # p = subprocess.Popen("echo Daniel", stdout=subprocess.PIPE, shell=True)
-    # (output, err) = p.communicate()
-    # p_status = p.wait()
-    # print("Command output : ", output)
-    # print("Command exit status/return code : ", p_status)
+def getContainerName():
+    return 'co-stst'
 
-    #Rodar o comando do Rodrigo, remover o echo...
-    output = subprocess.run(['echo', testCase], stdout=subprocess.PIPE)
+def containerStop():
+    subprocess.run(['docker', 'stop' , getContainerName()])
+
+def prepareContainer():
+    containerStop()
+    subprocess.run(['docker', 'container' , 'rm', getContainerName()])
+    subprocess.run(['docker', 'run' , '-d', '--rm', '--name' , getContainerName() , 'lib-tst'])
+    #Verificar outra forma de confirmar se o container está no ar
+    time.sleep(3)
+    subprocess.run(['docker', 'exec' , getContainerName(), '/usr/local/applyPatch.sh'])
+    subprocess.run(['docker', 'exec' , getContainerName(), '/usr/local/compTests.sh'])
+
+def getClassName(testCase):
+    lastSeparator = testCase.rfind('/')
+
+    if lastSeparator >= 0:
+        testCase = testCase[lastSeparator+1:]
+
+    extension = testCase.lower().find('.pr')
+
+    if extension >= 0:
+        testCase = testCase[:extension]
+
+    return testCase
+
+def getResultTestCase(testCase):
+    #Como o container foi criado com -D, o stop está matando o processo
+    #containerStop()
+    #subprocess.run(['docker', 'start' , getContainerName()])
+
+    #Verificar outra forma de confirmar se o container está no ar
+    #time.sleep(3)
+
+    output = subprocess.run(['docker', 'exec', getContainerName(), '/usr/local/runTest.sh', getClassName(testCase)], stdout=subprocess.PIPE)
     return output.stdout.decode('windows-1252').strip()
 
 def validResultTestCase(sourceCode, resultTestCase, successful, halfAssed, broke):
-    if resultTestCase == None or not resultTestCase['tests']['runned']:
+    if ( resultTestCase == None ) or ( 'tests' not in resultTestCase ) or ( not resultTestCase['tests']['runned'] ):
         broke.append(sourceCode)
     else:
         errors = getInvalidTests(resultTestCase['tests']['methods'])
@@ -82,6 +122,7 @@ def validResults(filesTestCase, successful, halfAssed, broke):
 
         validResultTestCase(sourceCode, resultTestCase, successful, halfAssed, broke)
     else:
+        prepareContainer()
         for sourceCode in filesTestCase:
             resultTestCase = getJsonTestCase(getResultTestCase(sourceCode))
             validResultTestCase(sourceCode, resultTestCase, successful, halfAssed, broke)
