@@ -2,6 +2,7 @@ import os
 import sys
 import json
 import time
+import datetime
 import subprocess
 
 def isTestingThisSource():
@@ -66,7 +67,7 @@ def containerStop():
 def prepareContainer():
     containerStop()
     subprocess.run(['docker', 'container' , 'rm', getContainerName()])
-    subprocess.run(['docker', 'run' , '-d', '--rm', '--name' , getContainerName() , 'lib-tst'])
+    subprocess.run(['docker', 'run' , '-d', '--name' , getContainerName() , 'lib-tst'])
     #Verificar outra forma de confirmar se o container está no ar
     time.sleep(3)
     subprocess.run(['docker', 'exec' , getContainerName(), '/usr/local/applyPatch.sh'])
@@ -86,15 +87,24 @@ def getClassName(testCase):
     return testCase
 
 def getResultTestCase(testCase):
+    outputStr = "{}"
     #Como o container foi criado com -D, o stop está matando o processo
-    #containerStop()
-    #subprocess.run(['docker', 'start' , getContainerName()])
+
+    containerStop()
+    subprocess.run(['docker', 'start' , getContainerName()])
 
     #Verificar outra forma de confirmar se o container está no ar
-    #time.sleep(3)
+    time.sleep(3)
 
-    output = subprocess.run(['docker', 'exec', getContainerName(), '/usr/local/runTest.sh', getClassName(testCase)], stdout=subprocess.PIPE)
-    return output.stdout.decode('windows-1252').strip()
+    try:
+        output = subprocess.run(['docker', 'exec', getContainerName(), '/usr/local/runTest.sh', getClassName(testCase)], stdout=subprocess.PIPE, timeout=500)
+        outputStr = output.stdout.decode('windows-1252').strip()
+    except:
+        outputStr = ""
+
+    print("Test Final: {}".format(getClassName(testCase)) + " - " + str(datetime.datetime.now()))
+    time.sleep(1.5)
+    return outputStr
 
 def validResultTestCase(sourceCode, resultTestCase, successful, halfAssed, broke):
     if ( resultTestCase == None ) or ( 'tests' not in resultTestCase ) or ( not resultTestCase['tests']['runned'] ):
@@ -124,6 +134,7 @@ def validResults(filesTestCase, successful, halfAssed, broke):
     else:
         prepareContainer()
         for sourceCode in filesTestCase:
+            print("Test Begin: {}".format(getClassName(sourceCode)) + " - " + str(datetime.datetime.now()))
             resultTestCase = getJsonTestCase(getResultTestCase(sourceCode))
             validResultTestCase(sourceCode, resultTestCase, successful, halfAssed, broke)
 
