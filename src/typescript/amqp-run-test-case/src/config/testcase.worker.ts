@@ -1,0 +1,1 @@
+export const qtdThreads: number = 5;

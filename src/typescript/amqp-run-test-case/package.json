@@ -1,0 +1,53 @@
+{
+  "name": "amqp-run-test-case",
+  "description": "",
+  "version": "1.0.0",
+  "license": "ISC",
+  "author": "Daniel Mendes",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Dadinel/Go-Horse.git"
+  },
+  "main": "lib/index.js",
+  "files": [
+    "css/",
+    "dist/",
+    "lib/",
+    "scss/"
+  ],
+  "scripts": {
+    "test": "tsc --noEmit && tslint \"src/**/*.ts?(x)\" && cross-env NODE_ENV=test jest --passWithNoTests",
+    "clean": "del-cli lib dist css coverage && jest --clearCache",
+    "build": "run-script clean && run-script build:js && run-script build:d.ts && run-script build:cleanup",
+    "build:cleanup": "del-cli \"lib/**/?(*.)test.@(ts|tsx|js|jsx)\"",
+    "build:d.ts": "tsc -p tsconfig.build.json",
+    "build:js": "cross-env NODE_ENV=production babel src --out-dir lib --extensions .ts,.tsx,.js,.jsx --copy-files",
+    "prepack": "run-script build",
+    "dev": "nodemon --watch \"src/\" --exec \"ts-node src/index.ts\" -e ts"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.5.0",
+    "@babel/core": "^7.5.4",
+    "@babel/plugin-proposal-class-properties": "^7.5.0",
+    "@babel/plugin-proposal-decorators": "^7.4.4",
+    "@babel/plugin-proposal-object-rest-spread": "^7.5.4",
+    "@babel/plugin-transform-typescript": "^7.5.2",
+    "@babel/preset-env": "^7.5.4",
+    "@types/amqplib": "^0.5.13",
+    "@types/jest": "^24.0.15",
+    "@types/node": "^12.6.3",
+    "@xornot/run-script": "^0.1.2",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-jest": "^24.8.0",
+    "cross-env": "^5.2.0",
+    "del-cli": "^2.0.0",
+    "jest": "^24.8.0",
+    "ts-node": "^8.3.0",
+    "tslint": "^5.18.0",
+    "typescript": "^3.5.3"
+  },
+  "dependencies": {
+    "amqplib": "^0.5.3",
+    "typescript": "^3.5.3"
+  }
+}

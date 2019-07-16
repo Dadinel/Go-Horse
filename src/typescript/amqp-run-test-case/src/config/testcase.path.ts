@@ -1,0 +1,1 @@
+export const pathTestCases: string = '/home/danielmendes/totvs/framework/likeAdvplFrame/test/';
