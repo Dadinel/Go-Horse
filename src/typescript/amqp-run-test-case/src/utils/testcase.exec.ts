@@ -1,10 +1,13 @@
-import * as util from 'util';
 import { exec } from 'child_process';
+import { ExecuteTestCase, ExecuteTestCaseFactory } from './ExecuteTestCaseOnContainer';
+
+const containerName: string = 'co-stst';
 
 export function runTestCase(testCase: string): Promise<string> {
+    const command: string = "docker exec " + containerName + " " + testCase;
+
     return new Promise( function(resolve, reject) {
         exec("echo " + testCase, function(err, stdout, stderr) {
-            console.log(stdout);
             if(err) {
                 reject(err.message);
             }
