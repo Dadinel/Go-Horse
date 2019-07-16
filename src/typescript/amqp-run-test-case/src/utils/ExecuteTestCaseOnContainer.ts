@@ -3,6 +3,7 @@ import { exec } from 'child_process';
 export class ExecuteTestCase {
     private containerName: string;
     private readonly stdoutKillerAll: string = '\nValidating the parameters...\n';
+    private readonly sizeOfKillerAll: number = this.stdoutKillerAll.length;
     private _testCase: string = "";
 
     constructor(containerName: string) {
@@ -29,15 +30,29 @@ export class ExecuteTestCase {
         exec('docker exec ' + this.containerName + ' /usr/local/compTests.sh');
     }
     
+    private removeStringFromJSON(json: string) : string {
+        let indexOfKillerAll: number;
+
+        indexOfKillerAll = json.indexOf(this.stdoutKillerAll);
+
+        if(indexOfKillerAll > 0) {
+            let sizeJson: number;
+            sizeJson = json.length - 4; //Magic Number, quebra de linhas etc...
+            json = json.substr(indexOfKillerAll + this.sizeOfKillerAll, sizeJson);
+        }
+
+        return json;
+    }
+
     public executeTestCase(): Promise<string> {
         return new Promise( (resolve, reject) => {
-            exec("docker exec " + this.containerName + " " + this._testCase, function(err, stdout, stderr) {
+            exec("docker exec " + this.containerName + " " + this._testCase, (err, stdout, stderr) => {
                 if(err) {
                     reject(err.message);
                 }
         
                 if(stdout) {
-                    resolve(stdout);
+                    resolve(this.removeStringFromJSON(stdout));
                 } else if(stderr) {
                     resolve(stderr)
                 }
