@@ -1,4 +1,4 @@
-import { exec } from 'child_process';
+import { executeProcess } from './exec.shell';
 
 export class ExecuteTestCase {
     private containerName: string;
@@ -19,15 +19,16 @@ export class ExecuteTestCase {
     }
 
     public stopContainer(): void {
-        exec('docker stop ' + this.containerName);
+        executeProcess('docker stop ' + this.containerName);
     }
 
     public prepareContainer(): void {
         this.stopContainer();
-        exec('docker container rm ' + this.containerName);
-        exec('docker run -d --name ' + this.containerName + ' lib-tst');
-        exec('docker exec ' + this.containerName + ' /usr/local/applyPatch.sh');
-        exec('docker exec ' + this.containerName + ' /usr/local/compTests.sh');
+        executeProcess('docker container rm ' + this.containerName);
+        executeProcess('docker run -d --name ' + this.containerName + ' lib-tst');
+        executeProcess('sleep 2'); //Foi a maneira que encontrei por enquanto...
+        executeProcess('docker exec ' + this.containerName + ' /usr/local/applyPatch.sh');
+        executeProcess('docker exec ' + this.containerName + ' /usr/local/compTests.sh');
     }
     
     private removeStringFromJSON(json: string) : string {
@@ -37,30 +38,22 @@ export class ExecuteTestCase {
 
         if(indexOfKillerAll > 0) {
             let sizeJson: number;
-            sizeJson = json.length - 4; //Magic Number, quebra de linhas etc...
+            sizeJson = json.length - ( indexOfKillerAll + this.sizeOfKillerAll + 4); //Magic Number, quebra de linhas etc...
             json = json.substr(indexOfKillerAll + this.sizeOfKillerAll, sizeJson);
         }
 
         return json;
     }
 
-    public executeTestCase(): Promise<string> {
-        return new Promise( (resolve, reject) => {
-            exec("docker exec " + this.containerName + " " + this._testCase, (err, stdout, stderr) => {
-                if(err) {
-                    reject(err.message);
-                }
-        
-                if(stdout) {
-                    resolve(this.removeStringFromJSON(stdout));
-                } else if(stderr) {
-                    resolve(stderr)
-                }
-                else {
-                    resolve("");
-                }
-            });
-        });
+    public executeTestCase(): string {
+        this.stopContainer()
+        executeProcess("docker start " + this.containerName);
+
+        let jsonTestCase: string;
+
+        jsonTestCase = executeProcess("docker exec " + this.containerName + " /usr/local/runTest.sh " + this._testCase);
+
+        return this.removeStringFromJSON(jsonTestCase);
     }
 }
 

@@ -1,1 +1,1 @@
-export const qtdThreads: number = 2;
+export const qtdThreads: number = 1;

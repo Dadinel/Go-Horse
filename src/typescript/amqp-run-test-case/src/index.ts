@@ -1,5 +1,5 @@
-import { workQueue } from './work.queue';
-import { writeOnQueue } from './writer.queue';
+import { workQueue } from './queues/work.queue';
+import { writeOnQueue } from './queues/writer.queue';
 import { getAllTestCases }  from './utils/testcases.list';
 import { qtdThreads } from './config/testcase.worker';
 
