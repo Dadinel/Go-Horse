@@ -1,5 +1,5 @@
-import { exec, ExecException } from 'child_process';
-import { execSync} from 'child_process';
+import { execSync } from 'child_process';
+import { logMessage } from './log.message';
 
 export function executeProcess(commandToExec: string): string {
     let executing: boolean;
@@ -11,7 +11,8 @@ export function executeProcess(commandToExec: string): string {
     let stdBytes: Buffer;
 
     try {
-        stdBytes = execSync(commandToExec);
+        logMessage(commandToExec);
+        stdBytes = execSync(commandToExec, {timeout: 300000});
 
         if(stdBytes) {
             stdReturn = stdBytes.toString();

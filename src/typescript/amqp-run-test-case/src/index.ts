@@ -1,7 +1,5 @@
-import { workQueue } from './queues/work.queue';
 import { writeOnQueue } from './queues/writer.queue';
 import { getAllTestCases }  from './utils/testcases.list';
-import { qtdThreads } from './config/testcase.worker';
 
 let pathTestCase: any;
 
@@ -11,6 +9,7 @@ if(process.argv.length >= 3) {
 
 writeOnQueue(getAllTestCases(pathTestCase));
 
-for(let i=1; i <= qtdThreads; i++) {
-    workQueue(i);
-}
+//Teste...
+// writeOnQueue(["FWCloseAreaTestCase"]); //Envia apenas um...
+// writeOnQueue(["FWCloseAreaTestCase","FWGetAreaTestCase"]); //Envia apenas dois...
+// writeOnQueue([getAllTestCases(pathTestCase)[1],getAllTestCases(pathTestCase)[2],getAllTestCases(pathTestCase)[3]]); //Envia apenas três...

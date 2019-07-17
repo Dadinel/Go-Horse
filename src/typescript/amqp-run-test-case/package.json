@@ -23,7 +23,8 @@
     "build:d.ts": "tsc -p tsconfig.build.json",
     "build:js": "cross-env NODE_ENV=production babel src --out-dir lib --extensions .ts,.tsx,.js,.jsx --copy-files",
     "prepack": "run-script build",
-    "dev": "nodemon --watch \"src/\" --exec \"ts-node src/index.ts\" -e ts"
+    "dev": "nodemon --watch \"src/\" --exec \"ts-node src/index.ts\" -e ts",
+    "dev:log": "devLog=logging nodemon --watch \"src/\" --exec \"ts-node src/index.ts\" -e ts"
   },
   "devDependencies": {
     "@babel/cli": "^7.5.0",

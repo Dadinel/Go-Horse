@@ -1,4 +1,5 @@
 import { executeProcess } from './exec.shell';
+import { sleep } from './sleep';
 
 export class ExecuteTestCase {
     private containerName: string;
@@ -24,9 +25,9 @@ export class ExecuteTestCase {
 
     public prepareContainer(): void {
         this.stopContainer();
-        executeProcess('docker container rm ' + this.containerName);
+        executeProcess('docker container rm -f ' + this.containerName);
         executeProcess('docker run -d --name ' + this.containerName + ' lib-tst');
-        executeProcess('sleep 2'); //Foi a maneira que encontrei por enquanto...
+        sleep(3);
         executeProcess('docker exec ' + this.containerName + ' /usr/local/applyPatch.sh');
         executeProcess('docker exec ' + this.containerName + ' /usr/local/compTests.sh');
     }
@@ -38,16 +39,17 @@ export class ExecuteTestCase {
 
         if(indexOfKillerAll > 0) {
             let sizeJson: number;
-            sizeJson = json.length - ( indexOfKillerAll + this.sizeOfKillerAll + 4); //Magic Number, quebra de linhas etc...
+            sizeJson = json.length - ( indexOfKillerAll + this.sizeOfKillerAll + 4); //Magic Number, palavra END, quebra de linhas etc...
             json = json.substr(indexOfKillerAll + this.sizeOfKillerAll, sizeJson);
         }
 
         return json;
     }
 
-    public executeTestCase(): string {
+    public runTestCase(): string {
         this.stopContainer()
         executeProcess("docker start " + this.containerName);
+        sleep(3);
 
         let jsonTestCase: string;
 
