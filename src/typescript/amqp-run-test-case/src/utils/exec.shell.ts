@@ -2,10 +2,8 @@ import { execSync } from 'child_process';
 import { logMessage } from './log.message';
 
 export function executeProcess(commandToExec: string): string {
-    let executing: boolean;
     let stdReturn: string;
 
-    executing = true;
     stdReturn = "";
 
     let stdBytes: Buffer;

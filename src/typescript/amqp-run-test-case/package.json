@@ -47,10 +47,16 @@
     "jest": "^24.8.0",
     "ts-node": "^8.3.0",
     "tslint": "^5.18.0",
-    "typescript": "^3.5.3"
+    "typescript": "^3.5.3",
+    "@types/express": "^4.17.0"
   },
   "dependencies": {
+    "@nestjs/common": "^6.5.3",
     "amqplib": "^0.5.3",
+    "express": "^4.17.1",
+    "js-base64": "^2.5.1",
+    "reflect-metadata": "^0.1.13",
+    "rxjs": "^6.5.2",
     "typescript": "^3.5.3"
   }
 }

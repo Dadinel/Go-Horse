@@ -1,0 +1,13 @@
+version: '3.6'
+services:  
+  license:
+    image: docker.totvs.io/framesp_ci/license:2.3.4                
+  appserver:
+    image: lib-base-with-tests:db
+    container_name: $appserver_id
+    depends_on:
+      - dbaccess
+    links:
+      - license
+    ports:
+      - 1201:1234

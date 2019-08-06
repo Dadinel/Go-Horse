@@ -1,13 +1,8 @@
-import { workQueue } from './queues/work.queue';
+import { workQueue } from './queues/amqp.work';
+//import { workQueue } from './queues/totvs.work';
+import { getDefaultParam } from  './utils/param.default';
+import { config } from './config/amqp.config';
 
-let id: string;
+//workQueue(getDefaultParam(2), getDefaultParam(3, config.withServer));
 
-if(process.argv.length >= 2) {
-    id = process.argv[2];
-    console.log(id);
-}
-else {
-    id = "1";
-}
-
-workQueue(parseInt(id));
+workQueue(getDefaultParam(2, '1'), getDefaultParam(3, config.withEnvironemt));

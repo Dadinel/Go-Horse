@@ -1,0 +1,48 @@
+version: '3.6'
+services:  
+  postgres:
+    image: docker.totvs.io/framesp_ci/protheus-postgres-empty
+    environment:
+      POSTGRES_USER: 'docker'
+      POSTGRES_DB: 'protheus_db'
+      POSTGRES_PASSWORD: "docker"      
+    ports:
+      - "5432:5432"    
+  # pgadmin:
+  #  image: dpage/pgadmin4:3.2
+  #  container_name: pgadmin_r23
+  #  restart: always    
+  #  environment:
+  #    - "PGADMIN_DEFAULT_EMAIL=admin@admin.com"
+  #    - "PGADMIN_DEFAULT_PASSWORD=frame"
+  #  depends_on:
+  #    - postgres
+  #  links:
+  #    - postgres    
+  #  ports:
+  #    - 7777:80
+  license:
+    image: docker.totvs.io/framesp_ci/license:2.3.4                
+  dbaccess:
+    image: docker.totvs.io/framesp_ci/dbaccess:postgres
+    depends_on:
+      - license
+      - postgres
+    links:
+      - license
+      - postgres        
+    ports:
+      - 7801:7801     
+  appserver:
+    image: lib-base-with-tests:db
+    container_name: $appserver_id
+    depends_on:
+      - license
+      - dbaccess
+    links:
+      - license
+      - dbaccess
+    ports:
+      - 1201:1234
+        
+    
