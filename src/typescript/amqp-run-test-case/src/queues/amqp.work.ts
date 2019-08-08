@@ -1,110 +1,87 @@
 import { config } from "../config/amqp.config";
-import { getAmqpConnect } from "../utils/amqp.channel";
+import { amqpFactory } from "../factory/amqp.factory";
 import { Amqp } from "../class/Amqp";
+import { Worker } from "../class/Worker";
+import * as amqpAPI from "amqplib/callback_api";
 import { Replies } from "amqplib";
 import { putDataOnExchange } from "../utils/amqp.put.data";
-import { ExecuteTestCase } from "../class/ExecuteTestCase";
-import { ExecuteTestCaseFactory } from "../utils/exec.testcase.factory";
+import { executeTestCaseFactory } from "../factory/exectestcase.factory";
 
-let exit: boolean = false;
-//let queueName: string;
-let amqpExchange: Amqp
-let keyType: string;
-let executorTestCase: ExecuteTestCase;
+const woker: Worker = new Worker();
 
-export function workQueue(id: string, key: string): void {
-    getAmqpConnect(config.fullAddress, (amqp: Amqp) => {
-        amqp.channel.assertExchange(config.direct, "direct", {durable: false});
-        amqp.channel.assertQueue(key, {exclusive: false, durable: false}, function(err: any, ok: Replies.AssertQueue) {
-            if(err) {
-                console.error(err);
-                throw err;
-            }
+export async function workQueue(id: string, key: string): Promise<void> {
+    const amqp: Amqp = await amqpFactory(config.fullAddress);
 
-            keyType = key;
-            amqpExchange = amqp;
+    amqp.channel.assertExchange(config.direct, "direct", {durable: false});
 
-            amqp.channel.bindQueue(ok.queue, config.direct, keyType);
-            executorTestCase = ExecuteTestCaseFactory(id, key);
-            consume();
-        });
-    });
+    const okQueue: Replies.AssertQueue = await amqp.createQueue(key, {exclusive: false, durable: false});
+
+    woker.keyType = key;
+    woker.amqpExchange = amqp;
+
+    amqp.channel.bindQueue(okQueue.queue, config.direct, woker.keyType);
+    woker.executorTestCase = executeTestCaseFactory(id, key);
+    consume();
 }
 
 function consume(): any {
-    try {
-        if(amqpExchange.hasChannel()) {
-            amqpExchange.channel.get(keyType, {noAck: false}, onConsume );
-        }
-        else {
-            finish();
-        }
-    }
-    catch(e) {
-        console.log(e);
+    if (woker.amqpExchange.hasChannel()) {
+        woker.amqpExchange.channel.get(woker.keyType, {noAck: false}, onConsume );
+    } else {
+        finish();
     }
 }
 
-function onConsume(err: any, msg: any) {
-    if(err) {
-        console.error(err);
+function onConsume(err: any, msg: any): void {
+    if (err) {
         throw err;
-    }
-    else if(msg) {
-        executorTestCase.testCase = Buffer.from(msg.content).toString();
+    } else if (msg) {
+        woker.executorTestCase.testCase = Buffer.from(msg.content).toString();
         console.log(Buffer.from(msg.content).toString());
 
-        let jsonTestCase: string = executorTestCase.runTestCase();
+        const jsonTestCase: string = woker.executorTestCase.runTestCase();
 
         try {
             console.log(JSON.parse(jsonTestCase));
-        }
-        catch {
+        } catch {
             console.log(jsonTestCase);
         }
 
-        amqpExchange.channel.ack(msg);
+        woker.amqpExchange.channel.ack(msg);
 
-        setTimeout(function() {
+        setTimeout( () => {
             consume();
             }
             , config.consumeTime
         );
-    }
-    else {
-        if(!exit) {
+    } else {
+        if (!woker.exit) {
             controller();
-        }
-
-        amqpExchange.closeConnection();
-
-        if(!exit) {
             setTimeout(consume, config.controllerTime);
-        }
-        else {
+        } else {
+            woker.amqpExchange.closeConnection();
             finish();
         }
     }
 }
 
-function controller(): void {
-    getAmqpConnect(config.fullAddress, (amqp: Amqp) => {
-        amqp.channel.assertExchange(config.controller, "fanout", {durable: false});
-        
-        amqp.channel.assertQueue(config.controller, {exclusive: false, durable: false}, function(err: any, ok: Replies.AssertQueue) {
-            if(err) {
-                console.error(err);
-                throw err;
-            }
+async function controller(): Promise<void> {
+    const amqp: Amqp = await amqpFactory(config.fullAddress);
 
-            amqp.channel.bindQueue(ok.queue, config.controller, "");
+    amqp.channel.assertExchange(config.controller, "fanout", {durable: false});
 
-            amqp.channel.consume(ok.queue, function(msg) {                    
-                    if(msg) {
-                        exit = Buffer.from(msg.content).toString() == config.ok;
+    const okQueue = await amqp.createQueue(config.controller, {exclusive: false, durable: false});
+
+    amqp.channel.bindQueue(okQueue.queue, config.controller, "");
+
+    try {
+        amqp.channel.consume(okQueue.queue, (msg: amqpAPI.Message) => {
+                if (amqp.hasChannel) {
+                    if (msg) {
+                        woker.exit = Buffer.from(msg.content).toString() === config.ok;
                         console.log(Buffer.from(msg.content).toString());
 
-                        if(exit) {
+                        if (woker.exit) {
                             putDataOnExchange(config.controller, "fanout", "", [config.ok]);
                         }
                     }
@@ -112,21 +89,21 @@ function controller(): void {
                     // amqp.channel.deleteQueue(ok.queue);
                     amqp.closeConnection();
                 }
-                , {noAck: true}
-            );
+            }
+            , {noAck: true}
+        );
+    } catch {}
 
-            setTimeout( () => {
-                try {
-                    // amqp.channel.deleteQueue(ok.queue);
-                    amqp.closeConnection();
-                }
-                catch{}
-            }, 15000 );
-        });        
-    });
+    setTimeout( () => {
+        try {
+            // amqp.channel.deleteQueue(ok.queue);
+            // amqp.channel.cancel(okQueue.queue);
+            amqp.closeConnection();
+        } catch {}
+    }, 15000 );
 }
 
-function finish() {
-    executorTestCase.killContainer();
-    process.exit(0);   
+function finish(): void {
+    woker.executorTestCase.killContainer();
+    process.exit(0);
 }

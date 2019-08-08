@@ -1,22 +1,18 @@
-import { execSync } from 'child_process';
-import { logMessage } from './log.message';
+import { execSync } from "child_process";
+import { logMessage } from "./log.message";
 
 export function executeProcess(commandToExec: string): string {
-    let stdReturn: string;
-
-    stdReturn = "";
-
-    let stdBytes: Buffer;
+    let stdReturn: string = "";
 
     try {
         logMessage(commandToExec);
-        stdBytes = execSync(commandToExec, {timeout: 300000});
 
-        if(stdBytes) {
+        const stdBytes: Buffer = execSync(commandToExec, {timeout: 300000});
+
+        if (stdBytes) {
             stdReturn = stdBytes.toString();
         }
-    }
-    catch(err) {
+    } catch (err) {
         stdReturn = err.message;
     }
 

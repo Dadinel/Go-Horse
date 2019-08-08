@@ -1,54 +1,39 @@
 import { config } from "../config/amqp.config";
-import { getAmqpConnect } from "../utils/amqp.channel";
+import { amqpFactory } from "../factory/amqp.factory";
 import { Amqp } from "../class/Amqp";
+import { TestCase } from "../class/TestCase";
 import { putDataOnExchange } from "../utils/amqp.put.data";
 import { Replies } from "amqplib";
+import { controllerTestCase } from "../utils/controller.testcase";
+import { Types, typeOfTestCase } from "../enum/Types";
 
-let binds: number = 0;
-
-export function putAllTestCases(testCases?: string[]): void {
+export async function putAllTestCases(testCases?: TestCase[]): Promise<void> {
     if (testCases) {
-        getAmqpConnect(config.fullAddress, (amqp: Amqp) => {
-            let binds: number = 0;
+        const amqp = await amqpFactory(config.fullAddress);
 
-            amqp.channel.assertExchange(config.direct, "direct", {durable: false});
+        amqp.channel.assertExchange(config.direct, "direct", {durable: false});
 
-            assertBindQueue(amqp, config.withDatabase);
-            assertBindQueue(amqp, config.withServer);
-            assertBindQueue(amqp, config.withEnvironemt);
+        await assertBindQueue(amqp, Types.server);
+        await assertBindQueue(amqp, Types.database);
+        await assertBindQueue(amqp, Types.environment);
 
-            publishOnExchange(testCases, amqp);
-        });
-    }
-    else {
-        throw "Nenhum caso de teste encontrado";
+        await publishOnExchange(testCases, amqp);
+
+        controllerTestCase.setFinish(true);
+    } else {
+        throw new Error("Nenhum caso de teste encontrado");
     }
 }
 
-function assertBindQueue(amqp: Amqp, type: string) {
-    amqp.channel.assertQueue(type, {exclusive: false, durable: false}, (err: any, ok: Replies.AssertQueue) => {
-        if(err) {
-            console.error(err);
-            throw err;
-        }
-
-        amqp.channel.bindQueue(ok.queue, config.direct, type);
-        binds++;
-    });   
+async function assertBindQueue(amqp: Amqp, type: typeOfTestCase): Promise<void> {
+    const okQueue: Replies.AssertQueue = await amqp.createQueue(type, {exclusive: false, durable: false});
+    amqp.channel.bindQueue(okQueue.queue, config.direct, type);
 }
 
-function publishOnExchange(testCases: Array<string>, amqp: Amqp) {
-    if(binds == 3 ) {
-        for(let i:number = 0; i < testCases.length; i++) {
-            //Colocar a lógica de chave aqui...
-            //let key: string = config.withServer; //Essa linha deve ser condicional
-            let key: string = config.withEnvironemt; //Essa linha deve ser condicional
-            amqp.channel.publish(config.direct, key, Buffer.from(testCases[i]));
-        }
+async function publishOnExchange(testCases: TestCase[], amqp: Amqp): Promise<void> {
+    for (const testCase of testCases) {
+        amqp.channel.publish(config.direct, testCase.type, Buffer.from(testCase.name));
+    }
 
-        putDataOnExchange(config.controller, "fanout", "", [config.ok]);
-    }
-    else {
-        setTimeout( publishOnExchange, 1500, testCases, amqp);
-    }
+    await putDataOnExchange(config.controller, "fanout", "", [config.ok]);
 }

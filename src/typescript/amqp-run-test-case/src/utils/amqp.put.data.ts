@@ -1,20 +1,20 @@
 import { config } from "../config/amqp.config";
-import { getAmqpConnect } from "./amqp.channel";
+import { amqpFactory } from "../factory/amqp.factory";
 import { Amqp } from "../class/Amqp";
 import { Replies } from "amqplib";
 
-export function putDataOnExchange(exchange: string, type:string, key: string, data: Array<string>): void {
-    getAmqpConnect(config.fullAddress, (amqp: Amqp) => {
-        amqp.channel.assertExchange(exchange, type, {durable: false});
+export async function putDataOnExchange(exchange: string, type: string, key: string, data: string[]): Promise<void> {
+    const amqp: Amqp = await amqpFactory(config.fullAddress);
 
-        amqp.channel.assertQueue(exchange, {exclusive: false, durable: false}, (err: any, ok: Replies.AssertQueue) => {
-            amqp.channel.bindQueue(ok.queue, exchange, key);
+    amqp.channel.assertExchange(exchange, type, {durable: false});
 
-            for(let i:number = 0; i < data.length; i++) {
-                amqp.channel.publish(exchange, key, Buffer.from(data[i]));
-            }
-        });
+    const okQueue: Replies.AssertQueue = await amqp.createQueue(exchange, {exclusive: false, durable: false});
 
-        setTimeout(amqp.closeConnection.bind(amqp), 1500);
-    });
+    amqp.channel.bindQueue(okQueue.queue, exchange, key);
+
+    for (const simgleData of data) {
+        amqp.channel.publish(exchange, key, Buffer.from(simgleData));
+    }
+
+    setTimeout(amqp.closeConnection.bind(amqp), 5000);
 }

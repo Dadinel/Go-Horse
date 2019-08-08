@@ -1,8 +1,7 @@
 export function getDefaultParam(position: number, defaultValue: string = "") {
-    if(process.argv.length > position) {
+    if (process.argv.length > position) {
         return process.argv[position];
-    }
-    else {
+    } else {
         return defaultValue;
     }
 }

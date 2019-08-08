@@ -1,113 +1,102 @@
 import * as amqp from "amqplib/callback_api";
+import { Replies } from "amqplib/callback_api";
 
 export class Amqp {
     private _connection: amqp.Connection;
     private _channel: amqp.Channel;
     private _url: string;
-    private _makeChannel: boolean;
 
     constructor(url: string) {
         this._url = url;
     }
 
-    async promiseConnect(): Promise<amqp.Connection> {
+    public async connect(): Promise<amqp.Connection> {
         return new Promise( (resolve, reject) => {
             amqp.connect(this._url, (err: any, connection: amqp.Connection) => {
-                if(err) {
+                if (err) {
                     reject(err);
-                }
-                else {
+                } else {
+                    this._connection = connection;
                     resolve(connection);
                 }
             });
         });
     }
 
-    async promiseCreateChannel(connect: amqp.Connection): Promise<amqp.Channel> {
+    public async createChannel(connect?: amqp.Connection): Promise<amqp.Channel> {
+        connect = connect || this._connection;
+
         return new Promise( (resolve, reject) => {
             connect.createChannel( (err: any, channel: amqp.Channel) => {
-                if(err) {
+                if (err) {
                     reject(err);
-                }
-                else {
+                } else {
+                    this._channel = channel;
                     resolve(channel);
                 }
             });
         });
     }
 
-    connect(): void {
-        if(!this.isConnected()) {
-            amqp.connect(this._url, (err: any, connection: amqp.Connection) => {
-                if(err) {
-                    console.error(err);
-                    throw err;
-                }
+    public async createQueue(queue: string, options?: any, channel?: amqp.Channel): Promise<Replies.AssertQueue> {
+        channel = channel || this._channel;
+        options = options || {};
 
-                // console.log("conectado");
-                this._connection = connection;
+        return new Promise( (resolve, reject) => {
+            channel.assertQueue(queue, options, (err: any, ok: Replies.AssertQueue) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(ok);
+                }
+            });
+        });
+    }
+
+    public async closeChannel(closeConnect: boolean = false): Promise<void> {
+        if (this.hasChannel()) {
+            return new Promise( (resolve, reject) => {
+                this._channel.close( (err) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        this._channel = null;
+                    }
+
+                    if (closeConnect) {
+                        resolve( this.closeConnection() );
+                    } else {
+                        resolve();
+                    }
+                });
             });
         }
     }
 
-    createChannel(): void {
-        if(this.isConnected()) {
-            if(!this.hasChannel()) {
-                this._makeChannel = true;
-
-                this._connection.createChannel((err: any, channel: amqp.Channel) => {
-                    if(err) {
-                        console.error(err);
-                        throw err;
+    public async closeConnection(): Promise<void> {
+        if (this.isConnected()) {
+            return new Promise( (resolve, reject) => {
+                if (this.hasChannel()) {
+                    resolve(this.closeChannel(true));
+                } else {
+                    try {
+                        this._connection.close();
+                    } catch {
                     }
 
-                    // console.log("canal criado");
-                    this._channel = channel;
-                    this._makeChannel = false;
-                });
-            }
-        }
-        else {
-            if(!this._makeChannel) {
-                setTimeout(this.createChannel.bind(this), 1500);
-            }
+                    this._connection = null;
+                    resolve();
+                }
+            });
         }
     }
 
-    hasChannel(): boolean {
+    public hasChannel(): boolean {
         return this._channel != null;
     }
 
-    isConnected(): boolean {
+    public isConnected(): boolean {
         return this._connection != null;
-    }
-
-    closeChannel(closeConnect: boolean = false): void {
-        if(this.hasChannel()) {
-            this._channel.close( (err) => {
-                if(err) {
-                    console.error(err);
-                    throw err;
-                }
-
-                this._channel = null;
-                if(closeConnect) {
-                    this._connection.close();
-                }
-            });
-        }
-    }
-
-    closeConnection(): void {
-        if(this.isConnected()) {
-            if(this.hasChannel()) {
-                this.closeChannel(true);
-            }
-            else {
-                this._connection.close();
-                this._connection = null;
-            }
-        }
     }
 
     get connection(): amqp.Connection {

@@ -1,7 +1,7 @@
-import * as express from 'express';
-import { port } from '../config/server.config';
+import * as express from "express";
+import { port } from "../config/server.config";
 
-let server: any = express();
+const server: any = express();
 
 server.listen(port, () => {
 });

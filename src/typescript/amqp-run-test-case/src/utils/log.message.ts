@@ -1,7 +1,7 @@
-const printLog: boolean = process.env.devLog == 'logging' || false;
+const printLog: boolean = process.env.devLog === "logging" || false;
 
 export function logMessage(...message: any): void {
-    if(printLog) {
+    if (printLog) {
         console.log(message);
     }
 }
