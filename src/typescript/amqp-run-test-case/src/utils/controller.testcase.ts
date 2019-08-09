@@ -10,4 +10,4 @@ class ControllerTestCase {
     }
 }
 
-export const controllerTestCase: ControllerTestCase =  new ControllerTestCase();
+export const controllerTestCase: ControllerTestCase = new ControllerTestCase();

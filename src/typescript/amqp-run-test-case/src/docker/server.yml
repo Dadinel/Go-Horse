@@ -1,13 +1,15 @@
+#As portas não devem ser expostas para evitar conflitos no host
 version: '3.6'
 services:  
   license:
-    image: docker.totvs.io/framesp_ci/license:2.3.4                
+    image: docker.totvs.io/framesp_ci/license:2.3.4
+    container_name: $license_ci_tc_id
   appserver:
     image: lib-base-with-tests:db
-    container_name: $appserver_id
+    container_name: $appserver_ci_tc_id
     depends_on:
-      - dbaccess
+      - license
     links:
       - license
-    ports:
-      - 1201:1234
+    # ports:
+    #   - 1201:1234

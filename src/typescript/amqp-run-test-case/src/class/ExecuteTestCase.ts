@@ -2,18 +2,25 @@ import { executeProcess } from "../utils/exec.shell";
 import { sleep } from "../utils/sleep";
 import { Base64 } from "js-base64";
 import { port } from "../config/server.config";
+import { Images } from "../enum/Images";
 
 export class ExecuteTestCase {
     private containerName: string;
     private readonly stdoutKillerAll: string = "\nValidating the parameters...\n";
     private readonly sizeOfKillerAll: number = this.stdoutKillerAll.length;
-    private _testCase: string = "";
-    private _ip: string = "localhost";
+    private _testCase: string;
+    private _ip: string;
 
-    constructor(private id: string, private image: string) {
-        const idContainer = "serverId" + this.id;
-        process.env.appserver_id = idContainer;
-        this.containerName = idContainer;
+    constructor(private id: string, private compose: string) {
+        const idContainer = this.compose + "0".repeat(3) + this.id;
+        const serverId = Images.appserver + idContainer;
+
+        process.env.appserver_ci_tc_id = serverId;
+        process.env.dbaccess_ci_tc_id = Images.dbaccess + idContainer;
+        process.env.license_ci_tc_id = Images.license + idContainer;
+        process.env.postgres_ci_tc_id = Images.postgres + idContainer;
+
+        this.containerName = serverId;
     }
 
     set testCase(testCase: string) {
@@ -21,7 +28,7 @@ export class ExecuteTestCase {
     }
 
     private stopContainer(): void {
-        executeProcess("docker-compose -f ./src/docker/" + this.image + ".yml stop");
+        executeProcess("docker-compose -f ./src/docker/" + this.compose + ".yml stop");
     }
 
     public killContainer(): void {
@@ -46,9 +53,10 @@ export class ExecuteTestCase {
     }
 
     private dockerStart(): void {
-        executeProcess("docker-compose -f ./src/docker/" + this.image + ".yml up -d --force-recreate");
+        executeProcess("docker-compose -f ./src/docker/" + this.compose + ".yml up -d --force-recreate");
         sleep(6);
-        this._ip = executeProcess("docker inspect serverId1 | grep Gateway | awk '/Gateway/ {print $2}'");
+        this._ip = executeProcess("docker inspect " + this.containerName +
+            " | grep Gateway | awk '/Gateway/ {print $2}'");
         this._ip = this._ip.replace(/["]?[,]?/g, "").trim();
     }
 

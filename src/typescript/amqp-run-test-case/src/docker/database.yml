@@ -1,13 +1,15 @@
+#As portas não devem ser expostas para evitar conflitos no host
 version: '3.6'
 services:  
   postgres:
     image: docker.totvs.io/framesp_ci/protheus-postgres-empty
+    container_name: $postgres_ci_tc_id
     environment:
       POSTGRES_USER: 'docker'
       POSTGRES_DB: 'protheus_db'
       POSTGRES_PASSWORD: "docker"      
-    ports:
-      - "5432:5432"    
+    # ports:
+    #   - "5432:5432"    
   # pgadmin:
   #  image: dpage/pgadmin4:3.2
   #  container_name: pgadmin_r23
@@ -23,26 +25,28 @@ services:
   #    - 7777:80
   license:
     image: docker.totvs.io/framesp_ci/license:2.3.4                
+    container_name: $license_ci_tc_id
   dbaccess:
     image: docker.totvs.io/framesp_ci/dbaccess:postgres
+    container_name: $dbaccess_ci_tc_id
     depends_on:
       - license
       - postgres
     links:
       - license
       - postgres        
-    ports:
-      - 7801:7801     
+    # ports:
+    #   - 7801:7801     
   appserver:
     image: lib-base-with-tests:db
-    container_name: $appserver_id
+    container_name: $appserver_ci_tc_id
     depends_on:
       - license
       - dbaccess
     links:
       - license
       - dbaccess
-    ports:
-      - 1201:1234
+    # ports:
+    #   - 1201:1234
         
     
