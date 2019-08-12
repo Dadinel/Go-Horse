@@ -1,6 +1,1 @@
-export const pathTestCases = {
-    main: "/home/danielmendes/totvs/framework/AdvplFramework/test/tests/",
-    withServer: "server/",
-    withDatabase: "database/",
-    withEnvironemt: "environment/"
-};
+export const pathTestCases: string = "/home/danielmendes/totvs/framework/AdvplFramework/test/tests/";

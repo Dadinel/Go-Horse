@@ -38,7 +38,7 @@ function getTestsByType(dir: string, type: typeOfTestCase): TestCase[] {
 }
 
 export function getAllTestCases(type: typeOfTestCase, dir?: string): TestCase[] {
-    dir = dir || testCasesPath.pathTestCases.main;
+    dir = dir || testCasesPath.pathTestCases;
 
     let testCases: TestCase[] = [];
 

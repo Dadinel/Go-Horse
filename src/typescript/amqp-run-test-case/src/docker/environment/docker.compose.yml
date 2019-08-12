@@ -3,7 +3,7 @@ version: '3.6'
 services:  
   postgres:
     image: docker.totvs.io/framesp_ci/mp-postgres-initiate-db:12.1.25
-    container_name: $postgres_ci_tc_id
+    container_name: $environment_postgres_ci_tc_id
     environment:
       POSTGRES_USER: 'docker'
       POSTGRES_DB: 'protheus_db'
@@ -25,10 +25,10 @@ services:
   #    - 7777:80
   license:
     image: docker.totvs.io/framesp_ci/license:2.3.4
-    container_name: $license_ci_tc_id
+    container_name: $environment_license_ci_tc_id
   dbaccess:
     image: docker.totvs.io/framesp_ci/dbaccess:postgres
-    container_name: $dbaccess_ci_tc_id
+    container_name: $environment_dbaccess_ci_tc_id
     depends_on:
       - license
       - postgres
@@ -39,7 +39,7 @@ services:
     #   - 7801:7801     
   appserver:
     image: lib-base-with-tests:env
-    container_name: $appserver_ci_tc_id
+    container_name: $environment_appserver_ci_tc_id
     depends_on:
       - license
       - dbaccess

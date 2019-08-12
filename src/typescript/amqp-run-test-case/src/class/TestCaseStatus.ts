@@ -21,6 +21,6 @@ export class TestCaseStatus {
     }
 
     public finish(): boolean {
-        return this._testCases.some( (testCase: TestCase) => !testCase.isTested );
+        return this._testCases.every( (testCase: TestCase) => testCase.isTested );
     }
 }
