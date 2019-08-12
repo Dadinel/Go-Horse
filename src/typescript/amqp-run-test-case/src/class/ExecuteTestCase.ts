@@ -82,9 +82,7 @@ export class ExecuteTestCase {
 
         if (jsonTestCase.trim() === "") {
             postResult = true;
-        }
-
-        if (!postResult) {
+        } else {
             try {
                 const parsedJsonTestCase = JSON.parse(jsonTestCase);
                 postResult = !parsedJsonTestCase.ok;
