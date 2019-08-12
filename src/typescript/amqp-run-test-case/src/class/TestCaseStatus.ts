@@ -15,7 +15,6 @@ export class TestCaseStatus {
         const testCaseUpdate: TestCase = this._testCases.find( (testcase: TestCase) => testcase.name === testCaseName);
 
         if (testCaseUpdate) {
-            console.log("Testado:" + testCaseName);
             testCaseUpdate.tested = true;
         }
     }

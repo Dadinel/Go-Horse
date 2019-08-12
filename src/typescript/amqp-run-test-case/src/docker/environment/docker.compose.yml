@@ -22,7 +22,7 @@ services:
   #  links:
   #    - postgres    
   #  ports:
-  #    - 7777:80
+  #    - 7776:80
   license:
     image: docker.totvs.io/framesp_ci/license:2.3.4
     container_name: $environment_license_ci_tc_id

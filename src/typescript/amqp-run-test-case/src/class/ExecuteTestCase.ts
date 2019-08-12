@@ -4,6 +4,7 @@ import { Base64 } from "js-base64";
 import { port } from "../config/server.config";
 import { Images } from "../enum/Images";
 import { ContainerName } from "../enum/ContainerName";
+import { PostTestCase } from "../class/PostTestCase";
 
 export class ExecuteTestCase {
     private containerName: string;
@@ -66,9 +67,32 @@ export class ExecuteTestCase {
         this.stopContainer();
         this.dockerStart();
 
-        const jsonTestCase: string = executeProcess("docker exec " + this.containerName + " /usr/local/runTest.sh " +
+        let jsonTestCase: string = executeProcess("docker exec " + this.containerName + " /usr/local/runTest.sh " +
             Base64.encode(this._testCase + "|" + "http://" + this._ip + ":" + port.toString() + "/testcase"));
 
-        return this.removeStringFromJSON(jsonTestCase);
+        jsonTestCase = this.removeStringFromJSON(jsonTestCase);
+
+        this.postFinisedTestCase(jsonTestCase);
+
+        return jsonTestCase;
+    }
+
+    private async postFinisedTestCase(jsonTestCase: string): Promise<void> {
+        let postResult: boolean = false;
+
+        if (jsonTestCase.trim() === "") {
+            postResult = true;
+        }
+
+        if (!postResult) {
+            try {
+                const parsedJsonTestCase = JSON.parse(jsonTestCase);
+                postResult = !parsedJsonTestCase.ok;
+            } catch { }
+        }
+
+        if (postResult) {
+            PostTestCase.forceFinish(this._ip, this._testCase);
+        }
     }
 }
