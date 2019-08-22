@@ -7,7 +7,7 @@ export class Md5Controller {
     constructor(private readonly md5Service: Md5Service) {}
 
     @Get('/:source')
-    getMd5FromFile(@Param('source') source: string): Promise<MD5> {
-        return this.md5Service.getMd5FromFile(source);
+    async getMd5FromFile(@Param('source') source: string): Promise<MD5> {
+        return await this.md5Service.getMd5FromFile(source);
     }
 }

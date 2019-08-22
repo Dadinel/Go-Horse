@@ -7,12 +7,12 @@ export class ParserController {
     constructor(private readonly parserService: ParserService) {}
 
     @Put()
-    putParsedSource(@Body() parsed: Parser): Promise<Parser> {
-        return this.parserService.updateParsedSource(parsed);
+    async putParsedSource(@Body() parsed: Parser): Promise<Parser> {
+        return await this.parserService.updateParsedSource(parsed);
     }
 
     @Post()
-    addParsedSource(@Body() parsed: Parser): Promise<Parser> {
-        return this.parserService.addParsedSource(parsed);
+    async addParsedSource(@Body() parsed: Parser): Promise<Parser> {
+        return await this.parserService.addParsedSource(parsed);
     }
 }
