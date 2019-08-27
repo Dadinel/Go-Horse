@@ -14,14 +14,16 @@ export class ParserLines extends Model<ParserLines> {
     public source: string;
 
     @PrimaryKey
-    @ForeignKey(() => Parser)
-    @Column
-    public md5: string;
-
-    @PrimaryKey
     @Column
     public line: number;
 
     @BelongsTo(() => Parser)
     parser: Parser;
+
+    public setParser(parser: Parser, line: number): void {
+        this.id = parser.id;
+        this.source = parser.source;
+        this.parser = parser;
+        this.line = line;
+    }
 }
