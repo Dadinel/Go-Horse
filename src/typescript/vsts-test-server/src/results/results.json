@@ -1,0 +1,560 @@
+{
+	"id": "xisto",
+	"tests": {
+		"classname": "FWCloseAreaTestCase",
+		"coverage": null,
+		"methods": [{
+			"line": -1,
+			"message": "",
+			"methodname": "SetUpClass",
+			"skiped": false,
+			"success": true
+		}, {
+			"line": -1,
+			"message": "",
+			"methodname": "SetUp001",
+			"skiped": false,
+			"success": true
+		}, {
+			"line": -1,
+			"message": "",
+			"methodname": "TearDown001",
+			"skiped": false,
+			"success": true
+		}, {
+			"line": -1,
+			"message": "",
+			"methodname": "EmptyAlias",
+			"skiped": false,
+			"success": true
+		}, {
+			"line": -1,
+			"message": "",
+			"methodname": "SetUp002",
+			"skiped": false,
+			"success": true
+		}, {
+			"line": -1,
+			"message": "",
+			"methodname": "TearDown002",
+			"skiped": false,
+			"success": true
+		}, {
+			"line": -1,
+			"message": "",
+			"methodname": "InvalidAlias",
+			"skiped": false,
+			"success": true
+		}, {
+			"line": -1,
+			"message": "",
+			"methodname": "TearDownClass",
+			"skiped": false,
+			"success": true
+		}],
+		"runned": false
+	},
+	"lcov": {
+		"TNs": [{
+				"SF": "FWPTINTERNAL.PRW",
+				"lines": [{
+						"DA": "3",
+						"hits": "0"
+					},
+					{
+						"DA": "27",
+						"hits": "1"
+					},
+					{
+						"DA": "28",
+						"hits": "1"
+					},
+					{
+						"DA": "30",
+						"hits": "1"
+					},
+					{
+						"DA": "32",
+						"hits": "1"
+					},
+					{
+						"DA": "33",
+						"hits": "0"
+					},
+					{
+						"DA": "34",
+						"hits": "0"
+					},
+					{
+						"DA": "35",
+						"hits": "0"
+					},
+					{
+						"DA": "36",
+						"hits": "1"
+					},
+					{
+						"DA": "37",
+						"hits": "1"
+					},
+					{
+						"DA": "39",
+						"hits": "0"
+					},
+					{
+						"DA": "40",
+						"hits": "0"
+					},
+					{
+						"DA": "44",
+						"hits": "1"
+					}
+				],
+				"LH": "13",
+				"LF": "13"
+			},
+			{
+				"SF": "FWCLOSEAREA.PRW",
+				"lines": [{
+						"DA": "14",
+						"hits": "1"
+					},
+					{
+						"DA": "15",
+						"hits": "0"
+					},
+					{
+						"DA": "18",
+						"hits": "1"
+					}
+				],
+				"LH": "3",
+				"LF": "3"
+			},
+			{
+				"SF": "FWCLOSEAREATESTCASE.PRW",
+				"lines": [{
+						"DA": "28",
+						"hits": "0"
+					},
+					{
+						"DA": "29",
+						"hits": "0"
+					},
+					{
+						"DA": "30",
+						"hits": "0"
+					},
+					{
+						"DA": "31",
+						"hits": "0"
+					},
+					{
+						"DA": "43",
+						"hits": "1"
+					},
+					{
+						"DA": "45",
+						"hits": "1"
+					},
+					{
+						"DA": "47",
+						"hits": "1"
+					},
+					{
+						"DA": "50",
+						"hits": "1"
+					},
+					{
+						"DA": "52",
+						"hits": "1"
+					},
+					{
+						"DA": "64",
+						"hits": "1"
+					},
+					{
+						"DA": "65",
+						"hits": "1"
+					},
+					{
+						"DA": "67",
+						"hits": "1"
+					},
+					{
+						"DA": "68",
+						"hits": "1"
+					},
+					{
+						"DA": "71",
+						"hits": "1"
+					},
+					{
+						"DA": "72",
+						"hits": "0"
+					},
+					{
+						"DA": "75",
+						"hits": "1"
+					},
+					{
+						"DA": "78",
+						"hits": "1"
+					},
+					{
+						"DA": "80",
+						"hits": "1"
+					}
+				],
+				"LH": "18",
+				"LF": "18"
+			},
+			{
+				"SF": "FWXVARUTIL.PRW",
+				"lines": [{
+						"DA": "3",
+						"hits": "1"
+					},
+					{
+						"DA": "36",
+						"hits": "1"
+					},
+					{
+						"DA": "54",
+						"hits": "1"
+					},
+					{
+						"DA": "55",
+						"hits": "1"
+					},
+					{
+						"DA": "57",
+						"hits": "1"
+					},
+					{
+						"DA": "58",
+						"hits": "1"
+					},
+					{
+						"DA": "60",
+						"hits": "1"
+					},
+					{
+						"DA": "64",
+						"hits": "1"
+					},
+					{
+						"DA": "68",
+						"hits": "1"
+					},
+					{
+						"DA": "69",
+						"hits": "1"
+					},
+					{
+						"DA": "70",
+						"hits": "0"
+					},
+					{
+						"DA": "72",
+						"hits": "0"
+					},
+					{
+						"DA": "73",
+						"hits": "0"
+					},
+					{
+						"DA": "74",
+						"hits": "0"
+					},
+					{
+						"DA": "75",
+						"hits": "0"
+					},
+					{
+						"DA": "76",
+						"hits": "0"
+					},
+					{
+						"DA": "77",
+						"hits": "0"
+					},
+					{
+						"DA": "78",
+						"hits": "0"
+					},
+					{
+						"DA": "79",
+						"hits": "0"
+					},
+					{
+						"DA": "81",
+						"hits": "0"
+					},
+					{
+						"DA": "85",
+						"hits": "0"
+					},
+					{
+						"DA": "88",
+						"hits": "1"
+					},
+					{
+						"DA": "105",
+						"hits": "0"
+					},
+					{
+						"DA": "106",
+						"hits": "0"
+					},
+					{
+						"DA": "108",
+						"hits": "0"
+					},
+					{
+						"DA": "110",
+						"hits": "0"
+					},
+					{
+						"DA": "112",
+						"hits": "0"
+					},
+					{
+						"DA": "113",
+						"hits": "0"
+					},
+					{
+						"DA": "114",
+						"hits": "0"
+					},
+					{
+						"DA": "115",
+						"hits": "0"
+					},
+					{
+						"DA": "116",
+						"hits": "0"
+					},
+					{
+						"DA": "118",
+						"hits": "0"
+					},
+					{
+						"DA": "120",
+						"hits": "0"
+					},
+					{
+						"DA": "121",
+						"hits": "0"
+					},
+					{
+						"DA": "122",
+						"hits": "0"
+					},
+					{
+						"DA": "123",
+						"hits": "0"
+					},
+					{
+						"DA": "125",
+						"hits": "0"
+					},
+					{
+						"DA": "128",
+						"hits": "0"
+					},
+					{
+						"DA": "130",
+						"hits": "0"
+					},
+					{
+						"DA": "131",
+						"hits": "0"
+					},
+					{
+						"DA": "132",
+						"hits": "0"
+					},
+					{
+						"DA": "134",
+						"hits": "0"
+					},
+					{
+						"DA": "137",
+						"hits": "0"
+					},
+					{
+						"DA": "140",
+						"hits": "0"
+					},
+					{
+						"DA": "157",
+						"hits": "0"
+					},
+					{
+						"DA": "158",
+						"hits": "0"
+					},
+					{
+						"DA": "160",
+						"hits": "0"
+					},
+					{
+						"DA": "162",
+						"hits": "0"
+					},
+					{
+						"DA": "163",
+						"hits": "0"
+					},
+					{
+						"DA": "164",
+						"hits": "0"
+					},
+					{
+						"DA": "165",
+						"hits": "0"
+					},
+					{
+						"DA": "167",
+						"hits": "0"
+					},
+					{
+						"DA": "168",
+						"hits": "0"
+					},
+					{
+						"DA": "170",
+						"hits": "0"
+					},
+					{
+						"DA": "171",
+						"hits": "0"
+					},
+					{
+						"DA": "178",
+						"hits": "0"
+					},
+					{
+						"DA": "195",
+						"hits": "0"
+					},
+					{
+						"DA": "196",
+						"hits": "0"
+					},
+					{
+						"DA": "197",
+						"hits": "0"
+					},
+					{
+						"DA": "199",
+						"hits": "0"
+					},
+					{
+						"DA": "201",
+						"hits": "0"
+					},
+					{
+						"DA": "202",
+						"hits": "0"
+					},
+					{
+						"DA": "203",
+						"hits": "0"
+					},
+					{
+						"DA": "204",
+						"hits": "0"
+					},
+					{
+						"DA": "207",
+						"hits": "0"
+					},
+					{
+						"DA": "224",
+						"hits": "0"
+					},
+					{
+						"DA": "225",
+						"hits": "0"
+					},
+					{
+						"DA": "226",
+						"hits": "0"
+					},
+					{
+						"DA": "228",
+						"hits": "0"
+					},
+					{
+						"DA": "230",
+						"hits": "0"
+					},
+					{
+						"DA": "231",
+						"hits": "0"
+					},
+					{
+						"DA": "232",
+						"hits": "0"
+					},
+					{
+						"DA": "233",
+						"hits": "0"
+					},
+					{
+						"DA": "234",
+						"hits": "0"
+					},
+					{
+						"DA": "235",
+						"hits": "0"
+					},
+					{
+						"DA": "240",
+						"hits": "0"
+					},
+					{
+						"DA": "257",
+						"hits": "0"
+					},
+					{
+						"DA": "258",
+						"hits": "0"
+					},
+					{
+						"DA": "259",
+						"hits": "0"
+					},
+					{
+						"DA": "261",
+						"hits": "0"
+					},
+					{
+						"DA": "263",
+						"hits": "0"
+					},
+					{
+						"DA": "264",
+						"hits": "0"
+					},
+					{
+						"DA": "265",
+						"hits": "0"
+					},
+					{
+						"DA": "266",
+						"hits": "0"
+					},
+					{
+						"DA": "269",
+						"hits": "0"
+					}
+				],
+				"LH": "85",
+				"LF": "85"
+			}
+		]
+	}
+}
