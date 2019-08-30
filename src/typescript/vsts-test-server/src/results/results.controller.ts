@@ -1,6 +1,6 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { ResultsService } from './results.service';
-import { ResultsDTO } from './dto/results.dto';
+import { ResultsDTO } from '../shared/result-dto/results.dto';
 
 @Controller('results')
 export class ResultsController {

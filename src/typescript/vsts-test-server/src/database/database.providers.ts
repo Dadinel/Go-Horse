@@ -1,6 +1,12 @@
 import { Sequelize } from 'sequelize-typescript';
 import { Parser } from '../parser/parser.entity';
 import { ParserLines } from '../parser/lines.entity';
+import { Coverage } from '../results/coverage.entity';
+import { CoverageLines } from '../results/lines.entity';
+import { ClassTest } from '../results/class.entity';
+import { ClassTestMethods } from '../results/method.entity';
+
+let mySequelize: Sequelize;
 
 export const databaseProviders = [
   {
@@ -15,9 +21,14 @@ export const databaseProviders = [
         password: 'Postgres2019!',
         database: 'ci',
       });
-      sequelize.addModels([Parser, ParserLines]);
+      sequelize.addModels([Parser, ParserLines, Coverage, CoverageLines, ClassTest, ClassTestMethods]);
       await sequelize.sync();
+      mySequelize = sequelize;
       return sequelize;
     },
   },
 ];
+
+export function getSequelizeInstance(): Sequelize {
+  return mySequelize;
+}

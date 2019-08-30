@@ -24,7 +24,7 @@ export class ParserService {
 
             await this.saveCommitParser(parsedModel, transaction);
         } catch (e) {
-            this.rollback(e, transaction);
+            await this.rollback(e, transaction);
         }
 
         return parsed;
